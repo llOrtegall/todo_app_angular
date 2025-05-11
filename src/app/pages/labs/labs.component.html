@@ -1,35 +1,93 @@
-<section>
-  <h1>{{welcome}}</h1>
-  <h2>mensaje directamente en el html</h2>
+<section class="w-full grid grid-cols-2 gap-2 p-4 bg-gradient-to-b from-slate-600 to-slate-400">
 
-  <ul>
-    <li *ngFor="let task of tasks">
-      {{task.title}}
-      <input type="checkbox" [checked]="task.completed">
-      <button>Eliminar</button>
-    </li>
-  </ul>
+  <article class="border rounded-md p-2">
 
-  <ul>
-    @for (item of items; track $index) {
-    <li>{{item}}</li>
-    }
-  </ul>
-</section>
+    <h2 class="text-center text-2xl text-yellow-600">
+      mensaje directamente en el html
+      <span class="text-2xl font-bold text-blue-500"> {{welcome}}</span>
+    </h2>
 
-<article>
-  <button [class]="`bg-blue-500 text-white p-2 rounded-md 
+    <ul>
+      <li *ngFor="let task of tasks">
+        {{task.title}}
+        <input type="checkbox" [checked]="task.completed">
+        <button>Eliminar</button>
+      </li>
+    </ul>
+
+    <ul>
+      @for (item of items; track $index) {
+      <li>{{item}}</li>
+      }
+    </ul>
+
+  </article>
+
+  <article>
+    <button [class]="`bg-blue-500 text-white p-2 rounded-md 
    ${disabled 
    ? 'opacity-50 cursor-not-allowed' 
    : 'cursor-pointer'
    }`" [disabled]="disabled">
-    Enviar
-  </button>
-</article>
+      Enviar
+    </button>
 
-<hr />
+    <h2>{{ 'hola'.repeat(5) }}</h2>
 
-<h2>{{ 'hola'.repeat(5) }}</h2>
+    <h2>Hola mi nombre es: {{ name }}</h2>
+    <h2>Tengo {{ age }} años</h2>
+  </article>
 
-<h2>Hola mi nombre es: {{ name }}</h2>
-<h2>Tengo {{ age }} años</h2>
+  <article class="bg-gray-700 p-2 rounded-md">
+    <h2>Ejemplo de usos de eventos en Angular JS </h2>
+
+    <button class="cursor-pointer bg-blue-500 text-white p-2 rounded-md" (click)="handleClick()">
+      Click me
+    </button>
+  </article>
+
+  <article class="bg-gray-700 p-2 rounded-md">
+
+    <h2 class="text-center text-2xl text-yellow-600">Eventos</h2>
+    <label for="name">Name</label>
+    <input class="w-full border rounded-md p-2" type="number" [value]="age" placeholder="Add a new task"
+      (change)="changeHandler($event)">
+    <label for="name">Age</label>
+    <input class="w-full border rounded-md p-2" type="text" [value]="name" placeholder="Add a new task"
+      (change)="changeHandlerName($event)">
+
+    <h1>Ejemplo de form con multiple inputs</h1>
+    <form (change)="changeHandlerMultipleInputs($event)">
+      <label for="name">Name</label>
+      <input class="w-full border rounded-md p-2" type="text" [value]="name" placeholder="Add a new task">
+      <label for="age">Age</label>
+      <input class="w-full border rounded-md p-2" type="number" [value]="age" placeholder="Add a new task">
+    </form>
+  </article>
+
+  <article class="bg-gray-700 p-2 rounded-md">
+    <h1>Ejemplo con signals</h1>
+    <h2>{{nameSignal()}}</h2>
+    <input type="text" [value]="nameSignal()" (change)="changeHandlerNameSignal($event)">
+  </article>
+
+  <article class="bg-gray-700 p-2 rounded-md">
+    <h2>Ejemplo de uso de signals con listas</h2>
+    <p>total de tareas: {{task2Signals().length}}</p>
+    <ul>
+      <li 
+        class="p-2 border rounded-md mb-2"
+        *ngFor="let task of task2Signals(); index as i">
+        {{i + 1}} {{task.title}}
+      </li>
+    </ul>
+    <h2>Uso de for con signals nueva sintaxis</h2>
+    <ul class="mt-2 border rounded-md p-2">
+      @for (task of task2Signals(); track $index) {
+      <li class="p-2 border rounded-md mb-2">{{task.title}}</li>
+      }
+    </ul>
+  </article>
+
+
+</section>
