@@ -25,5 +25,12 @@ export class LabsComponent {
       title: 'Task 3',
       completed: false
     }
-  ]
+  ];
+
+  name = 'Ivan Ortega';
+  age = 28;
+
+  items = ['Item 1', 'Item 2', 'Item 3'];
+
+  disabled = true;
 }
