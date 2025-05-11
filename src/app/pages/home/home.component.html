@@ -1,13 +1,23 @@
 <main class="max-w-96 mx-auto mt-12">
-  <form (submit)="addTask($event)" class="flex gap-2 px-6 py-4 border rounded-md w-full">
-    <input type="text" name="taskName" placeholder="Add a new task" class="w-full border rounded-md p-2">
-
-    <button class="bg-blue-500 text-white p-2 rounded-md cursor-pointer hover:bg-blue-600" type="submit">Add</button>
+  <form 
+  class="flex gap-2 px-6 py-4 border rounded-md w-full" (submit)="addTask($event)">
+    <input 
+      type="text" name="taskName" 
+      placeholder="Add a new task" 
+      class="w-full border rounded-md p-2" 
+      [formControl]="newTaskControl"
+      [class.border-red-500]="newTaskControl.invalid && newTaskControl.touched"
+    />
+    <button 
+    class="text-white p-2 rounded-md cursor-pointer bg-blue-500 hover:bg-blue-600" 
+    type="submit">Add</button>
   </form>
 
   <ul class="w-full mt-4 border rounded-md p-2 flex flex-col gap-2">
     @for (task of task(); track $index) {
-    <li class="flex gap-2 p-2 border rounded-md items-center justify-between">
+    <li 
+    [class.line-through]="task.completed"
+    class="flex gap-2 p-2 border rounded-md items-center justify-between">
       <input type="checkbox" [checked]="task.completed" (change)="toggleTask(task.id)">
       <span>{{task.title}}</span>
       <button class="cursor-pointer bg-red-500 font-semibold text-white hover:bg-red-600 p-2 rounded-md" (click)="deleteTask(task.id)">
@@ -20,6 +30,22 @@
       </button>
     </li>
     }
+    <!-- <li class="border-t pt-2">
+      <span *ngIf="task().length === 1; else sayItems">Item</span>
+      <ng-template #sayItems>
+        <span>Items</span>
+      </ng-template>
+      <span class="font-bold">: {{task().length}}</span>
+    </li> -->
+    <li class="border-t pt-2">
+      @if (task().length === 0) {
+        <span>No hay tareas</span>
+      } @else if (task().length === 1) {
+        <span>Hay {{task().length}} tarea</span>
+      } @else  {
+        <span>Hay {{task().length}} tareas</span>
+      }
+    </li>
+      
   </ul>
-
 </main>

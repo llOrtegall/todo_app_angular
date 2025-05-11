@@ -1,11 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-labs',
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
+  standalone: true,
   templateUrl: './labs.component.html',
-  styleUrl: './labs.component.css'
 })
 export class LabsComponent {
   welcome = 'Todo App Angular Learning';
@@ -83,4 +84,5 @@ export class LabsComponent {
     this.name = (ev.target as HTMLInputElement).value;
     this.age = Number((ev.target as HTMLInputElement).value);
   }
+
 }

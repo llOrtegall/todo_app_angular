@@ -1,10 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, signal } from '@angular/core';
-import { Task } from '@/app/models/task.model'
+import { Task } from '@/app/models/task.model';
+import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule],
+  imports: [CommonModule, ReactiveFormsModule],
+  standalone: true,
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
@@ -26,15 +28,23 @@ export class HomeComponent {
     }
   ]);
 
-  addTask(event: Event){
-    event.preventDefault();
-    
-    const input = event.target as HTMLFormElement;
-    const newTask = input['taskName'].value;
+  // Add Task antiguo sin formularios
+  // addTask(event: Event){
+  //   event.preventDefault();
 
-    this.task.update(tasks => [...tasks, { id: tasks.length + 1, title: newTask, completed: false }])
-    input['taskName'].value = '';
-  }
+  //   const fields = Object.fromEntries(new FormData(event.target as HTMLFormElement));
+  //   const taskName = fields['taskName'] as string;
+
+  //   if(!taskName || taskName.trim() === ''){  
+  //     alert('Por favor ingresa un nombre para la tarea');
+  //     return;
+  //   }
+
+  //   this.task.update(tasks => [...tasks, { id: tasks.length +1, title: taskName, completed: false}]);
+    
+  //   (event.target as HTMLFormElement).reset();
+  // }
+    
 
   toggleTask(id: number){
     this.task.update(tasks => tasks.map(task => task.id === id ? {...task, completed: !task.completed} : task))
@@ -43,4 +53,26 @@ export class HomeComponent {
   deleteTask(id: number){
     this.task.update(tasks => tasks.filter(task => task.id !== id))
   }
+
+  newTaskControl = new FormControl('', { 
+    nonNullable: true,
+    validators: [
+      Validators.required,
+      Validators.minLength(3),
+      Validators.maxLength(100)
+    ]
+   });
+
+   addTask(event: Event){
+    event.preventDefault();
+    if(this.newTaskControl.valid){
+      const value = this.newTaskControl.value.trim();
+      if(value === ''){
+        alert('Por favor ingresa un nombre para la tarea');
+        return;
+      }
+      this.task.update(tasks => [...tasks, { id: tasks.length +1, title: value, completed: false}]);
+      this.newTaskControl.reset();
+    }
+   }
 }
