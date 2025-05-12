@@ -1,7 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 @import "tailwindcss";
 
-:root{
-  font-family: 'Inter', sans-serif;
-  color-scheme: light dark;
+:root { 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
 }
+
+.checkbox-main {
+  --mat-sys-primary: oklch(0.53 0.1184 168.35);
+  --mat-sys-on-surface: oklch(0.8 0.0913 266.82);
+}
+

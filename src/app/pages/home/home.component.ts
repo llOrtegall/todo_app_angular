@@ -1,54 +1,53 @@
-import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
-import { Task } from '@/app/models/task.model';
+import { Component, computed, signal, effect, inject, Injector } from '@angular/core';
 import { FormControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { CommonModule } from '@angular/common';
+import { Task } from '@/app/models/task.model';
 
 @Component({
   selector: 'app-home',
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatCheckboxModule],
   standalone: true,
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
-  task = signal<Task[]>([
-    {
-      id: 1,
-      title: 'User el CLI de angular',
-      completed: false,
-      editing: false
-    },
-    {
-      id: 2,
-      title: 'Crear un proyecto de angular',
-      completed: false,
-      editing: false
-    },
-    {
-      id: 3,
-      title: 'Crear un componente',
-      completed: false,
-      editing: false
-    }
-  ]);
+  injector = inject(Injector);
 
-  // Add Task antiguo sin formularios
-  // addTask(event: Event){
-  //   event.preventDefault();
+  // este ngOnInit se ejecuta cuando el componente se inicializa 
+  ngOnInit(){
+    const storage = localStorage.getItem('tasks');
+    if(storage){
+      const tasks = JSON.parse(storage);
+      this.task.set(tasks);
+    };
 
-  //   const fields = Object.fromEntries(new FormData(event.target as HTMLFormElement));
-  //   const taskName = fields['taskName'] as string;
+    this.trackTask();
+  }
 
-  //   if(!taskName || taskName.trim() === ''){  
-  //     alert('Por favor ingresa un nombre para la tarea');
-  //     return;
-  //   }
+  trackTask(){
+    effect(() => {
+      const tasks = this.task();
+      localStorage.setItem('tasks', JSON.stringify(tasks))
+    }, { injector: this.injector })
+  }
 
-  //   this.task.update(tasks => [...tasks, { id: tasks.length +1, title: taskName, completed: false}]);
+  task = signal<Task[]>([]);
 
-  //   (event.target as HTMLFormElement).reset();
-  // }
+  filter = signal<'all' | 'completed' | 'pending'>('all');
 
+  taskByFilter = computed(() => {
+    const filter = this.filter();
+    const tasks = this.task();
 
+    if(filter === 'pending') return tasks.filter(task => !task.completed);
+    if(filter === 'completed') return tasks.filter(task => task.completed);
+    return tasks;
+  })
+
+  changeFilter(filter: string) {
+    this.filter.set(filter as 'all' | 'completed' | 'pending');
+  }
+    
   toggleTask(id: number) {
     this.task.update(tasks => tasks.map(task =>
       task.id === id

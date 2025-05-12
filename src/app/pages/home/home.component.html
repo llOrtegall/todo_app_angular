@@ -1,19 +1,29 @@
-<main class="max-w-96 mx-auto mt-12">
-  <form class="flex gap-2 px-6 py-4 border rounded-md w-full" (submit)="addTask($event)">
-    <input type="text" name="taskName" placeholder="Add a new task" class="w-full border rounded-md p-2"
+<div class="absolute top-0 z-[-2] h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+
+<main class="max-w-[600px] mx-auto mt-12 px-6 py-4 rounded-md flex flex-col gap-4 bg-gradient-to-b from-slate-950 via-slate-900 to-slate-800 shadow-2xl text-slate-400">
+  <header>
+    <h1 class="text-3xl font-bold">Todo App</h1>
+    <p class="text-sm text-gray-500">All my task in one place !!! </p>
+  </header>
+
+  <form class="flex gap-2 px-6 py-4 border border-slate-700 rounded-md w-full" (submit)="addTask($event)">
+    <input type="text" name="taskName" placeholder="Take a coffee break" class="w-2/3 border border-slate-700 rounded-md p-2"
       [formControl]="newTaskControl" [class.border-red-500]="newTaskControl.invalid && newTaskControl.touched" />
-    <button class="text-white p-2 rounded-md cursor-pointer bg-blue-500 hover:bg-blue-600" type="submit">Add</button>
+    <button class="w-1/3 text-white p-2 rounded-md cursor-pointer bg-blue-950 hover:bg-blue-800 font-semibold " type="submit">Add New Task</button>
   </form>
 
-  <ul class="w-full mt-4 border rounded-md p-2 flex flex-col gap-2">
-    @for (task of task(); track $index) {
-    <li (dblclick)="updateTaskEditingMode(task.id)" [class.line-through]="task.completed"
-      class="flex gap-2 p-2 border rounded-md items-center justify-between">
+  <ul class="w-full mt-4 border border-slate-700 rounded-md p-2 flex flex-col gap-2 h-96 overflow-y-scroll">
+    @for (task of taskByFilter(); track $index) {
+    <li [class.line-through]="task.completed"
+      class="flex gap-2 p-2 border border-slate-700 rounded-md items-center justify-between">
 
       @if(task.editing === false){
-      <input type="checkbox" [checked]="task.completed" (change)="toggleTask(task.id)">
-      <span>{{task.title}}</span>
-      <button class="cursor-pointer bg-red-500 font-semibold text-white hover:bg-red-600 p-2 rounded-md"
+      <span>{{task.id}}</span>
+      <mat-checkbox class="checkbox-main" [checked]="task.completed" (change)="toggleTask(task.id)"></mat-checkbox>
+      <p (dblclick)="updateTaskEditingMode(task.id)" class="text-start text-xl font-semibold flex-1 cursor-pointer hover:text-yellow-500 hover:underline" title="Double click to edit">
+        {{task.title}}
+      </p>
+      <button class="cursor-pointer bg-red-700 font-semibold text-white hover:bg-red-600 p-2 rounded-md"
         (click)="deleteTask(task.id)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
           class="size-6">
@@ -33,14 +43,15 @@
         </span>
         <input type="text" name="updateTitle" value="{{task.title}}" class="flex-grow border rounded-md p-2">
         <button type="submit"
-          class="cursor-pointer bg-green-500 font-semibold text-white hover:bg-green-600 p-2 rounded-md">
+          class="cursor-pointer bg-green-900 font-semibold text-white hover:bg-green-800 p-2 rounded-md">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="size-6">
             <path strokeLinecap="round" strokeLinejoin="round"
               d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
           </svg>
         </button>
-        <button class="cursor-pointer bg-red-500 font-semibold text-white hover:bg-red-600 p-2 rounded-md" (click)="updateTaskEditingMode(task.id)">
+        <button class="cursor-pointer bg-red-700 font-semibold text-white hover:bg-red-600 p-2 rounded-md"
+          (click)="updateTaskEditingMode(task.id)">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
             class="size-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -48,26 +59,43 @@
         </button>
       </form>
       }
-
     </li>
-
     }
-    <!-- <li class="border-t pt-2">
-      <span *ngIf="task().length === 1; else sayItems">Item</span>
-      <ng-template #sayItems>
-        <span>Items</span>
-      </ng-template>
-      <span class="font-bold">: {{task().length}}</span>
-    </li> -->
-    <li class="border-t pt-2">
-      @if (task().length === 0) {
-      <span>No hay tareas</span>
-      } @else if (task().length === 1) {
-      <span>Hay {{task().length}} tarea</span>
+  </ul>
+
+  <footer class="flex gap-2 p-4 border items-center rounded-md justify-between">
+
+    <li class="text-xl font-semibold text-yellow-600">
+      @if (taskByFilter().length === 0) {
+      <span>Do not have tasks</span>
+      } @else if (taskByFilter().length === 1) {
+      <span>Have {{taskByFilter().length}} task</span>
       } @else {
-      <span>Hay {{task().length}} tareas</span>
+      <span>Have {{taskByFilter().length}} tasks</span>
       }
     </li>
 
-  </ul>
+    <ul class="flex gap-2">
+      <li>
+        <button [class.bg-red-500]="filter() === 'all'"
+          class="bg-blue-500 text-white px-2 py-1 rounded-md cursor-pointer hover:bg-blue-600"
+          (click)="filter.set('all')">All</button>
+      </li>
+      <li>
+        <button [class.bg-red-500]="filter() === 'completed'"
+          class="bg-blue-500 text-white px-2 py-1 rounded-md cursor-pointer hover:bg-blue-600"
+          (click)="filter.set('completed')">Completed</button>
+      </li>
+      <li>
+        <button [class.bg-red-500]="filter() === 'pending'"
+          class="bg-blue-500 text-white px-2 py-1 rounded-md cursor-pointer hover:bg-blue-600"
+          (click)="filter.set('pending')">Pending</button>
+      </li>
+    </ul>
+
+  </footer>
+
+  <div class="absolute top-20 left-20 text-slate-400 ">
+    Can you add a new task to the list?
+  </div>
 </main>
